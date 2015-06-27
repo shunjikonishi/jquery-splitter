@@ -2,6 +2,8 @@
 
 Simple splitter for jquery
 
+[DEMO](http://shunjikonishi.github.io/jquery-splitter/demo.html)
+
 ## Install
 
 ``` bash
@@ -19,6 +21,7 @@ $(function() {
     "limit": 100
   });
 });
+</script>
 ```
 
 The target element must have only two elements. And must not have other.
