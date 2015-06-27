@@ -1,6 +1,6 @@
 {
   "name": "jquery-simple-splitter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple splitter for jQuery",
   "main": "jquery.splitter.js",
   "scripts": {
