@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="jquery.splitter.js"></script>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+#leftPane {
+  width: 200px;
+}
+#topPane {
+  height: 100px;
+}
+</style>
+</head>
+<body>
+<div id="workspace">
+  <div id="leftPane">
+    <p>Left</p>
+  </div>
+  <div id="rightPane">
+    <div id="topPane">
+      <p>Right Top</p>
+    </div>
+    <div id="bottomPane">
+      <p>Right Bottom</p>
+    </div>
+  </div>
+</div>
+<script>
+$(function() {
+  $("#workspace").splitter({
+    "orientation": "horizontal",
+    "limit": 100
+  });
+  $("#rightPane").splitter({
+    "orientation": "vertical",
+    "limit": 100
+  });
+});
+</script>
+</body>
+</html>
