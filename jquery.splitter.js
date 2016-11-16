@@ -7,7 +7,6 @@
 }(function($, window, document, undefined) {
 	function SplitterManager() {
 		var splitters = [],
-			current = null,
 			drag = false,
 			bgColor = null,
 			current = null,
@@ -159,9 +158,9 @@
 	}
 	/**
 	 * The splitter for element
-	 * @param parrent - parent element
+	 * @param parent - parent element
 	 * @param div1 - The element which placed in above or left in parent element
-	 * @param div1 - The element which placed in below or right in parent element
+	 * @param div2 - The element which placed in below or right in parent element
 	 * @param horizontal - If true, this makes horizontal split, or vertical split.
 	 */
 	function Splitter(parent, div1, div2, horizontal) {
@@ -174,9 +173,6 @@
 			limit = 0,
 			paneResized = null,
 			windowResized = null,
-			parent = $(parent),
-			div1 = $(div1),
-			div2 = $(div2),
 			resizebar = $("<div class='splitter-resizebar'></div>").appendTo(parent);
 		
 		resizebar.css({
@@ -272,12 +268,13 @@
 				}
 			},
 			"position" : function(n) {
-				if (self.orientation() == "horizontal") {
+				var high, low;
+ 				if (self.orientation() == "horizontal") {
 					if (n === undefined) {
 						return resizebar.css("left");
 					} else {
-						var low = limit;
-						var high = parent.width() - limit;
+						low = limit;
+						high = parent.width() - limit;
 						if (n < low) {
 							n = low;
 						} else if (n > high) {
@@ -291,8 +288,8 @@
 					if (n === undefined) {
 						return resizebar.css("top");
 					} else {
-						var low = limit;
-						var high = parent.height() - limit;
+						low = limit;
+						high = parent.height() - limit;
 						if (n < low) {
 							n = low;
 						} else if (n > high) {
