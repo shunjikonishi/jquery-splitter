@@ -9,7 +9,8 @@
 		var splitters = [],
 			current = null,
 			bgColor = null,
-			dragObj = null;
+			dragObj = null,
+			overlay = null;
 
 		function doResize(current, ev) {
 			var parent = current.parent;
@@ -76,16 +77,30 @@
 		
 		$(document.documentElement).mousedown(function() {
 			dragObj = current;
-			if (!dragObj) {
+			if (dragObj) {
 				bgColor = dragObj.resizebar.css("background-color");
 				dragObj.resizebar.css("background-color", '#696969');
-				$('body').css('cursor', dragObj.resizebar.css("cursor"));
+				var $body = $('body');
+				$body.css('cursor', dragObj.resizebar.css("cursor"));
+				overlay = $("<div class='splitter-overlay'/>").css({
+					position: "absolute",
+					width: "100%",
+					height: "100%",
+					left: 0,
+					top: 0,
+					"z-index": 9999
+				});
+				$body.append(overlay);
 				return false;
 			}
 		}).mouseup(function() {
 			if (!dragObj) {
 				dragObj.resizebar.css("background-color", bgColor);
 				$('body').css('cursor', 'auto');
+			}
+			if (overlay) {
+				overlay.remove();
+				overlay = null;
 			}
 			dragObj = null;
 		}).mousemove(function(ev) {
