@@ -8,11 +8,9 @@
 	function SplitterManager() {
 		var splitters = [],
 			current = null,
-			drag = false,
 			bgColor = null,
-			current = null,
 			dragObj = null;
-		
+
 		function doResize(current, ev) {
 			var parent = current.parent;
 			var div1 = current.div1;
@@ -78,23 +76,25 @@
 		
 		$(document.documentElement).mousedown(function() {
 			dragObj = current;
-			if (dragObj != null) {
+			if (!dragObj) {
 				bgColor = dragObj.resizebar.css("background-color");
 				dragObj.resizebar.css("background-color", '#696969');
-				$('<div class="splitterMask"></div>').insertAfter(dragObj.parent);
 				$('body').css('cursor', dragObj.resizebar.css("cursor"));
-				drag = true;
 				return false;
 			}
 		}).mouseup(function() {
-			if (dragObj != null) {
-				drag = false;
-				$('div.splitterMask').remove();
+			if (!dragObj) {
 				dragObj.resizebar.css("background-color", bgColor);
 				$('body').css('cursor', 'auto');
 			}
+			dragObj = null;
 		}).mousemove(function(ev) {
-			if (dragObj == null || !drag) {
+			if (!dragObj) {
+				return;
+			}
+			var buttonState = typeof(ev.buttons) === "undefined" ? ev.which : ev.buttons;
+			if (!buttonState) {
+				dragObj = null;
 				return;
 			}
 			var horizontal = dragObj.orientation() == "horizontal";
@@ -152,6 +152,9 @@
 			}
 		}
 		$.extend(this, {
+			"size": function() {
+				return splitters.length;
+			},
 			"setCurrent" : setCurrent,
 			"add" : add,
 			"release" : release
@@ -164,8 +167,8 @@
 	 * @param div1 - The element which placed in below or right in parent element
 	 * @param horizontal - If true, this makes horizontal split, or vertical split.
 	 */
-	function Splitter(parent, div1, div2, horizontal) {
-		if (manager == null) {
+	function Splitter(parent, div1, div2, horizontal, barwidth) {
+		if (!manager) {
 			manager = new SplitterManager();
 		}
 		manager.add(this);
@@ -178,7 +181,7 @@
 			div1 = $(div1),
 			div2 = $(div2),
 			resizebar = $("<div class='splitter-resizebar'></div>").appendTo(parent);
-		
+		resizebar.addClass("splitter-" + manager.size);
 		resizebar.css({
 			"background-color" : "#a9a9a9",
 			"position" : "absolute",
@@ -200,7 +203,7 @@
 			});
 			resizebar.css({
 				"left" : w1,
-				"width" : 4,
+				"width" : barwidth,
 				"height" : "100%",
 				"cursor" : "col-resize"
 			});
@@ -223,7 +226,7 @@
 			resizebar.css({
 				"top" : h1,
 				"width" : "100%",
-				"height" : 4,
+				"height" : barwidth,
 				"cursor" : "row-resize"
 			});
 			var h3 = resizebar.outerHeight(true);
@@ -248,6 +251,7 @@
 					return paneResized;
 				} else {
 					paneResized = func;
+					return self;
 				}
 			},
 			"windowResized" : function(func) {
@@ -255,6 +259,7 @@
 					return windowResized;
 				} else {
 					windowResized = func;
+					return self;
 				}
 			},
 			"keepLeft" : function(b) {
@@ -262,6 +267,7 @@
 					return keepLeft;
 				} else {
 					keepLeft = b;
+					return self;
 				}
 			},
 			"limit" : function(n) {
@@ -269,6 +275,7 @@
 					return limit;
 				} else {
 					limit = n;
+					return self;
 				}
 			},
 			"position" : function(n) {
@@ -303,9 +310,11 @@
 						div2.css("height", parent.height() - resizebar.outerHeight(true) - n);
 					}
 				}
+				return self;
 			},
 			"release" : function() {
 				manager.release(self);
+				return self;
 			}
 		});
 	}
@@ -321,7 +330,8 @@
 			"limit" : 0,
 			"keepLeft" : true,
 			"paneResized" : null,
-			"windowResized" : null
+			"windowResized" : null,
+			"barwidth": 4
 		};
 		if (options) {
 			$.extend(settings, options);
@@ -340,7 +350,7 @@
 			}
 			div2.css("height", this.height() - h1);
 		}
-		var splitter = new Splitter(this, settings.div1, settings.div2, settings.orientation == "horizontal");
+		var splitter = new Splitter(this, settings.div1, settings.div2, settings.orientation == "horizontal", settings.barwidth);
 		splitter.limit(settings.limit);
 		splitter.keepLeft(settings.keepLeft);
 		splitter.paneResized(settings.paneResized);
