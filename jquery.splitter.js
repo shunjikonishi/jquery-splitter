@@ -75,21 +75,27 @@
 			}
 		}
 		
-		$(document.documentElement).mousedown(function() {
+		$(document.documentElement).mousedown(function(ev) {
+			var buttonState = typeof(ev.buttons) === "undefined" ? ev.which : ev.buttons;
+			if (buttonState !== 1) {
+				return;
+			}
 			dragObj = current;
 			if (dragObj) {
 				bgColor = dragObj.resizebar.css("background-color");
 				dragObj.resizebar.css("background-color", '#696969');
 				var $body = $('body');
 				$body.css('cursor', dragObj.resizebar.css("cursor"));
-				overlay = $("<div class='splitter-overlay'/>").css({
-					position: "absolute",
-					width: "100%",
-					height: "100%",
-					left: 0,
-					top: 0,
-					"z-index": 9999
-				});
+				if (!overlay) {
+					overlay = $("<div class='splitter-overlay'/>").css({
+						position: "absolute",
+						width: "100%",
+						height: "100%",
+						left: 0,
+						top: 0,
+						"z-index": 9999
+					});
+				}
 				$body.append(overlay);
 				return false;
 			}
