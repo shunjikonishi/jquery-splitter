@@ -100,7 +100,7 @@
 				return false;
 			}
 		}).mouseup(function() {
-			if (!dragObj) {
+			if (dragObj) {
 				dragObj.resizebar.css("background-color", bgColor);
 				$('body').css('cursor', 'auto');
 			}
